@@ -1,0 +1,50 @@
+diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
+index db1a91dfa702..07f2d0b08510 100644
+--- a/samples/bpf/Makefile
++++ b/samples/bpf/Makefile
+@@ -53,6 +53,12 @@ hostprogs-y += xdpsock
+ hostprogs-y += xdp_fwd
+ hostprogs-y += task_fd_query
+ hostprogs-y += xdp_sample_pkts
++#
++# Vault19 BPF programming tutorial: BPF agent(user)
++#
++hostprogs-y += vault19_bio_trace
++hostprogs-y += vault19_pagecache_trace
++hostprogs-y += vault19_ctracer
+ 
+ # Libbpf dependencies
+ LIBBPF = $(TOOLS_PATH)/lib/bpf/libbpf.a
+@@ -109,6 +115,12 @@ xdpsock-objs := xdpsock_user.o
+ xdp_fwd-objs := xdp_fwd_user.o
+ task_fd_query-objs := bpf_load.o task_fd_query_user.o $(TRACE_HELPERS)
+ xdp_sample_pkts-objs := xdp_sample_pkts_user.o $(TRACE_HELPERS)
++#
++# Vault19 BPF programming tutorial: BPF agent(user)
++#
++vault19_bio_trace-objs := bpf_load.o vault19_bio_trace_user.o $(TRACE_HELPERS)
++vault19_pagecache_trace-objs := bpf_load.o vault19_pagecache_trace_user.o
++vault19_ctracer-objs := bpf_load.o vault19_ctracer_user.o json_writer.o
+ 
+ # Tell kbuild to always build the programs
+ always := $(hostprogs-y)
+@@ -167,6 +179,11 @@ always += xdpsock_kern.o
+ always += xdp_fwd_kern.o
+ always += task_fd_query_kern.o
+ always += xdp_sample_pkts_kern.o
++#
++# Vault19 BPF programming tutorial: BPF program (kernel)
++#
++always += vault19_bio_trace_kern.o
++always += vault19_pagecache_trace_kern.o
+ 
+ KBUILD_HOSTCFLAGS += -I$(objtree)/usr/include
+ KBUILD_HOSTCFLAGS += -I$(srctree)/tools/lib/
+@@ -184,6 +201,7 @@ HOSTCFLAGS_trace_event_user.o += -I$(srctree)/tools/lib/bpf/
+ HOSTCFLAGS_sampleip_user.o += -I$(srctree)/tools/lib/bpf/
+ HOSTCFLAGS_task_fd_query_user.o += -I$(srctree)/tools/lib/bpf/
+ HOSTCFLAGS_xdp_sample_pkts_user.o += -I$(srctree)/tools/lib/bpf/
++HOSTCFLAGS_vault19_bio_trace_user.o += -I$(srctree)/tools/lib/bpf/
+ 
+ KBUILD_HOSTLDLIBS		+= $(LIBBPF) -lelf
+ HOSTLDLIBS_tracex4		+= -lrt
