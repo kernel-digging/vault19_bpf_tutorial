@@ -54,23 +54,23 @@ c_list = list()
 src_list = os.listdir(src_path)
 for cfile in src_list:
     if "-ctracer.c" in cfile:
-        for tf in tfunc_list:
-            if tf["func_name"] in cfile:
-                copyfile(src_path+"/"+cfile, build_path+"/"+cfile)
-                c_list.append("always += %s-ctracer.o\n"%tf["func_name"])
-                break
+        copyfile(src_path+"/"+cfile, build_path+"/"+cfile)
+        b=cfile[:-1]+"o"
+        c_list.append("always += %s\n"%b)
 
 print "Rewriting %s ... "%m_path
 makefile_fd = open("%s/Makefile.old"%build_path,"r")
 m=makefile_fd.read().split('\n')
 new_fd = open("%s/Makefile"%build_path,"w")
 
+done = False
 for line in m:
-    if "always +=" in line and "_kern.o" in line and "vault19" in line:
+    if "always +=" in line and "_kern.o" in line and "vault19" in line and not done:
         new_fd.write("#\n")
         new_fd.write("# ctracer: generated BPF programs(kernel)\n")
         for l in c_list:
             new_fd.write(l)
+        done = True
     else:
         new_fd.write(line+"\n")
 new_fd.close()
